@@ -43,54 +43,98 @@ sequenceDiagram
 config:
   layout: elk
 ---
-flowchart TD
-  subgraph Customer_Part["Customer Progression"]
-    A1["Level 1: 1 Order"]
-    A2["Level 2: 2 Orders"]
-    A3["Level 3: 3 Orders"]
-    A1 --> A2 --> A3
-  end
+classDiagram
+    class Game {
+        +currentLevel: int
+        +totalPoints: int
+        +startGame()
+        +nextLevel()
+        +endGame()
+    }
 
-  subgraph Cooking_Main["Cooking Main Sequence"]
-    B1["Customer In"]
-    B2["Customer Order"]
-    B3["Player Chooses Order Type"]
-    B4["Show Steps (1–7)"]
-    B5["Step N: Multiple Choice (A, B, C, D)"]
-    B6["Choice?"]
-    B7["Wrong → Deduct Points & Retry Step"]
-    B8["Right → Next Step"]
-    B9["Complete All Steps → Order Ready!"]
+    class Customer {
+        +customerId: int
+        +level: int
+        +orders: Order[]
+        +pickOrder(): Order
+    }
 
-    B1 --> B2 --> B3 --> B4 --> B5 --> B6
-    B6 -->|Wrong| B7 --> B5
-    B6 -->|Right| B8 --> B5
-    B8 -.->|Until last step| B9
-  end
+    class Level {
+        +levelNumber: int
+        +orderCount: int
+        +orders: Order[]
+        +isComplete: bool
+    }
 
-  subgraph Menu["Menu Items"]
-    C1["Fried Chicken (7 Steps)"]
-    C2["Pizza (7 Steps)"]
-    C3["Fries (7 Steps)"]
-    C4["Burger (7 Steps)"]
-  end
+    class Order {
+        +orderId: int
+        +foodType: string
+        +steps: Step[]
+        +isCompleted: bool
+    }
 
-  %% Connections between major parts
-  A1 -.-> B1
-  A2 -.-> B1
-  A3 -.-> B1
-  B3 --> Menu
-  Menu --> B4
-  B9 --> A2
-  A3 -->|Game Progression| B1
+    class Step {
+        +stepNumber: int
+        +question: string
+        +choices: Choice[]
+        +correctAnswer: string
+        +isAnswered: bool
+    }
 
-  %% Styling
-  classDef customer fill:#ecfeff,stroke:#22d3ee,stroke-width:2px;
-  classDef cooking fill:#f0fdf4,stroke:#4ade80,stroke-width:2px;
-  classDef menu fill:#fefce8,stroke:#facc15,stroke-width:2px;
+    class Choice {
+        +choiceLabel: string
+        +choiceText: string
+        +isCorrect: bool
+    }
 
-  class Customer_Part,A1,A2,A3 customer;
-  class Cooking_Main,B1,B2,B3,B4,B5,B6,B7,B8,B9 cooking;
-  class Menu,C1,C2,C3,C4 menu;
+    class Food {
+        +foodName: string
+        +stepCount: int
+        +preparedSteps: Step[]
+    }
+
+    class FriedChicken {
+        +foodName: string
+    }
+
+    class Pizza {
+        +foodName: string
+    }
+
+    class Fries {
+        +foodName: string
+    }
+
+    class Burger {
+        +foodName: string
+    }
+
+    class GameSession {
+        +sessionId: int
+        +player: Customer
+        +currentOrder: Order
+        +currentStep: Step
+        +points: int
+        +processAnswer(choice: Choice)
+        +deductPoints()
+        +advanceToNextStep()
+        +returnToStep()
+    }
+
+    Game --> Customer: manages
+    Game --> Level: contains
+    Level --> Order: includes
+    Customer --> Order: selects
+    Order --> Step: contains
+    Step --> Choice: has
+    Order --> Food: prepares
+    Food <|-- FriedChicken
+    Food <|-- Pizza
+    Food <|-- Fries
+    Food <|-- Burger
+    GameSession --> Customer: tracks
+    GameSession --> Order: processes
+    GameSession --> Step: evaluates
+    GameSession --> Choice: receives
 ```
 
