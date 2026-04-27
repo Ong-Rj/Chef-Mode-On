@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Chef-Mode-On/Chef-Mode-On.vcxproj" />
+  <Project Path="Chef-Mode-On/Chef-Mode-On.vcxproj" Id="068676b8-a78f-4db0-8541-93235682d071" />
 </Solution>
